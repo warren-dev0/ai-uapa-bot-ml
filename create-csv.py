@@ -1,3 +1,5 @@
+# Crea un archivo CSV con datos de publicidad y ventas
+
 import pandas as pd
 
 data = pd.DataFrame({

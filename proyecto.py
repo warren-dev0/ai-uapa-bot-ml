@@ -13,33 +13,30 @@ from sklearn.decomposition import PCA
 from sklearn.datasets import load_iris
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, silhouette_score
 
-# import core_samples_mask
-from sklearn import metrics
-
 # Cargar el conjunto de datos
-# Usar un conjunto de datos público o simulado. Aquí usaremos datos simulados.
-# Preprocesar los datos
 
-# Get the absolute path of the current directory
+# Obtener el directorio actual
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
-# Construct the absolute file path to the CSV file
+# Construir la ruta del archivo CSV
 file_path = os.path.join(current_directory, "datos.csv")
 
-# Load the CSV file
+# Cargar el conjunto de datos
 data = pd.read_csv(file_path)
 
-# No hay valores faltantes en este conjunto de datos simulado
-
-# Normalización
+# Normalización de los datos
 data['Publicidad'] = (data['Publicidad'] - data['Publicidad'].mean()) / data['Publicidad'].std()
-# Dividir el conjunto de datos
+data['Ventas'] = (data['Ventas'] - data['Ventas'].mean()) / data['Ventas'].std()
+
+# Dividir el conjunto de datos en características y etiquetas
 X = data[['Publicidad']]
 y = data['Ventas']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+
 # Aplicar algoritmos de aprendizaje supervisado
-# Regresión Lineal
+
+# Primer algoritmos utilizado (Regresión Lineal)
 
 # Crear el modelo
 lin_reg = LinearRegression()
@@ -52,7 +49,9 @@ mae_lin = mean_absolute_error(y_test, y_pred_lin)
 r2_lin = r2_score(y_test, y_pred_lin)
 
 
-# Árboles de Decisión
+# Segundo algoritmo utilizado (Árboles de Decisión)
+
+# Crear el modelo
 tree_reg = DecisionTreeRegressor(random_state=42)
 tree_reg.fit(X_train, y_train)
 y_pred_tree = tree_reg.predict(X_test)
@@ -62,7 +61,10 @@ mse_tree = mean_squared_error(y_test, y_pred_tree)
 mae_tree = mean_absolute_error(y_test, y_pred_tree)
 r2_tree = r2_score(y_test, y_pred_tree)
 
+
+
 #Aprendizaje no supervisado
+
 #Primer algoritmo utilizado (Kmean)
 
 # Crear el modelo
@@ -72,6 +74,7 @@ y_kmeans = kmeans.predict(X_test)
 
 # Evaluar el modelo
 silhouette = silhouette_score(X_test, y_kmeans)
+
 
 # Segundo algoritmo utilizado (PCA)
 
@@ -87,44 +90,53 @@ explained_variance = pca.explained_variance_ratio_
 print(f"Explained variance ratio of each principal component: {explained_variance}")
 print(f"Total explained variance: {explained_variance.sum()}")
 
+
+
+
 # Guardar los modelos
 # Guardar los modelos en un archivo binario usando la biblioteca pickle
-# Get the absolute path of the models directory
+
+# Obtener el directorio actual para los modelos
 models_directory = os.path.join(current_directory, "models")
 
-# Create the models directory if it does not exist
+# Crear el directorio de modelos si no existe
 if not os.path.exists(models_directory):
     os.makedirs(models_directory)
 
-# Construct the absolute file path to the linear regression model file
+# Construir la ruta absoluta del archivo del modelo de regresión lineal
 lin_reg_model_path = os.path.join(models_directory, "linear_regression_model.pkl")
 
-# Save the linear regression model
+# Guardar el modelo de regresión lineal
 with open(lin_reg_model_path, "wb") as file:
     pickle.dump(lin_reg, file)
 
-# Construct the absolute file path to the decision tree model file
+# Construir la ruta absoluta del archivo del modelo de árbol de decisión
 tree_reg_model_path = os.path.join(models_directory, "decision_tree_model.pkl")
 
-# Save the decision tree model
+# Guardar el modelo de árbol de decisión
 with open(tree_reg_model_path, "wb") as file:
     pickle.dump(tree_reg, file)
 
-# Construct the absolute file path to the kmeans model file
+# Construir la ruta absoluta del archivo del modelo KMeans
 kmeans_model_path = os.path.join(models_directory, "kmeans_model.pkl")
 
-# Save the kmeans model
+# Guardar el modelo KMeans
 with open(kmeans_model_path, "wb") as file:
     pickle.dump(kmeans, file)
 
-# Construct the absolute file path to the pca model file
+# Construir la ruta absoluta del archivo del modelo PCA
 pca_model_path = os.path.join(models_directory, "pca_model.pkl")
 
-# Save the pca model
+# Guardar el modelo PCA
 with open(pca_model_path, "wb") as file:
     pickle.dump(pca, file)
 
+
+
+
 # Visualización de resultados
+
+
 # Visualizar los resultados de la regresión lineal
 plt.scatter(X_test, y_test, color='black')
 plt.plot(X_test, y_pred_lin, color='blue', linewidth=3)
@@ -162,43 +174,48 @@ plt.xlabel('Principal Component 1')
 plt.ylabel('Principal Component 2')
 plt.show()
 
-# Imprimir las métricas de evaluación
+
+
+# Imprimir las métricas de evaluación de los modelos
+
+# Metricas de Regresión Lineal
 print("Métricas de Regresión Lineal")
 print("MSE:", mse_lin)
 print("MAE:", mae_lin)
 print("R2:", r2_lin)
 print()
 
+# Metricas de Árbol de Decisión
 print("Métricas de Árbol de Decisión")
 print("MSE:", mse_tree)
 print("MAE:", mae_tree)
 print("R2:", r2_tree)
 print()
 
+# Metricas de KMeans
 print("Métrica de KMeans")
 print("Silhouette Score:", silhouette)
 print()
 
+# Metricas de PCA
 print("Métrica de PCA")
 print("Silhouette Score:", silhouette)
 print()
 
 
 # Guardar las métricas de evaluación
-# Guardar las métricas de evaluación en un archivo CSV
-# Get the absolute path of the metrics directory
 
+# Obtener el directorio actual para las métricas
 metrics_directory = os.path.join(current_directory, "metrics")
 
-# Create the metrics directory if it does not exist
-
+# Crear el directorio de métricas si no existe
 if not os.path.exists(metrics_directory):
     os.makedirs(metrics_directory)
 
-# Construct the absolute file path to the metrics file
+# Construir la ruta absoluta del archivo CSV de métricas
 metrics_file_path = os.path.join(metrics_directory, "metrics.csv")
 
-# Create a DataFrame with the metrics
+# Crear un DataFrame con las métricas de evaluación
 metrics_data = {
     "Model": ["Regresión Lineal", "Árbol de Decisión", "KMeans", "PCA"],
     "MSE": [mse_lin, mse_tree, 0, 0],
@@ -209,11 +226,13 @@ metrics_data = {
 
 metrics_df = pd.DataFrame(metrics_data)
 
-# Save the metrics to a CSV file
+# Guardar el DataFrame en un archivo CSV
 metrics_df.to_csv(metrics_file_path, index=False)
 
-# Visualización de las métricas
-# Visualizar las métricas de evaluación en un gráfico de barras
+
+
+# Visualizar las métricas de los modelos
+
 sns.set_theme(style="whitegrid")
 plt.figure(figsize=(10, 6))
 barplot = sns.barplot(data=metrics_df, x="Model", y="MSE")
@@ -234,6 +253,3 @@ plt.figure(figsize=(10, 6))
 barplot = sns.barplot(data=metrics_df, x="Model", y="Silhouette Score")
 plt.title("Silhouette Score de los Modelos")
 plt.show()
-
-
-# Fin del script
